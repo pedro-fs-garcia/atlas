@@ -17,6 +17,8 @@ export const AppDataSource = new DataSource({
     max: Number(process.env.DB_POOL_MAX || 10),
     min: Number(process.env.DB_POOL_MIN || 2),
     idleTimeoutMillis: 30000,
+    charset: 'UTF8',
+    client_encoding: 'UTF8',
   },
 
   synchronize: false ? nodeEnv === 'production' : true,

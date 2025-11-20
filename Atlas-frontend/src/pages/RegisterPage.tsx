@@ -16,7 +16,7 @@ export const RegisterPage = () => {
     setError('');
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('A senha deve ter pelo menos 6 caracteres');
       return;
     }
 
@@ -26,7 +26,7 @@ export const RegisterPage = () => {
       await register({ username, email, password });
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to register');
+      setError(err.response?.data?.message || 'Falha ao cadastrar');
     } finally {
       setLoading(false);
     }
@@ -35,12 +35,12 @@ export const RegisterPage = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Register</h1>
+        <h1>Cadastrar</h1>
         <form onSubmit={handleSubmit}>
           {error && <div className="error-message">{error}</div>}
-          
+
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">Nome de usuário</label>
             <input
               id="username"
               type="text"
@@ -52,7 +52,7 @@ export const RegisterPage = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">E-mail</label>
             <input
               id="email"
               type="email"
@@ -64,7 +64,7 @@ export const RegisterPage = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Senha</label>
             <input
               id="password"
               type="password"
@@ -77,12 +77,12 @@ export const RegisterPage = () => {
           </div>
 
           <button type="submit" disabled={loading}>
-            {loading ? 'Loading...' : 'Register'}
+            {loading ? 'Carregando...' : 'Cadastrar'}
           </button>
         </form>
 
         <p className="auth-link">
-          Already have an account? <Link to="/login">Login here</Link>
+          Já tem uma conta? <Link to="/login">Entre aqui</Link>
         </p>
       </div>
     </div>

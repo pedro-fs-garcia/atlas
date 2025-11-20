@@ -5,10 +5,14 @@ import type {
   RegisterDTO,
   Continent,
   Country,
+  City,
   CulturalObservation,
   CreateContinentDTO,
   CreateCountryDTO,
+  CreateCityDTO,
   CreateObservationDTO,
+  WeatherData,
+  RestCountryData,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -95,8 +99,35 @@ class ApiClient {
     await this.client.delete(`/countries/${id}`);
   }
 
+  // Cities
+  async getCities(filters?: { country_id?: number; continent_id?: number }): Promise<City[]> {
+    const response = await this.client.get<City[]>('/cities', {
+      params: filters,
+    });
+    return response.data;
+  }
+
+  async getCity(id: number): Promise<City> {
+    const response = await this.client.get<City>(`/cities/${id}`);
+    return response.data;
+  }
+
+  async createCity(data: CreateCityDTO): Promise<City> {
+    const response = await this.client.post<City>('/cities', data);
+    return response.data;
+  }
+
+  async updateCity(id: number, data: Partial<CreateCityDTO>): Promise<City> {
+    const response = await this.client.put<City>(`/cities/${id}`, data);
+    return response.data;
+  }
+
+  async deleteCity(id: number): Promise<void> {
+    await this.client.delete(`/cities/${id}`);
+  }
+
   // Cultural Observations
-  async getObservations(filters?: { country_id?: number; user_id?: number }): Promise<CulturalObservation[]> {
+  async getObservations(filters?: { country_id?: number; city_id?: number; user_id?: number }): Promise<CulturalObservation[]> {
     const response = await this.client.get<CulturalObservation[]>('/cultural-observations', {
       params: filters,
     });
@@ -120,6 +151,19 @@ class ApiClient {
 
   async deleteObservation(id: number): Promise<void> {
     await this.client.delete(`/cultural-observations/${id}`);
+  }
+
+  // External APIs
+  async getCountryInfo(countryName: string): Promise<RestCountryData> {
+    const response = await this.client.get<RestCountryData>(`/external-apis/countries/${countryName}`);
+    return response.data;
+  }
+
+  async getWeatherByCoordinates(lat: number, lon: number): Promise<WeatherData> {
+    const response = await this.client.get<WeatherData>('/external-apis/weather/coordinates', {
+      params: { lat, lon },
+    });
+    return response.data;
   }
 }
 

@@ -1,11 +1,13 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { api } from '../services/api';
-import type { CulturalObservation, Country, CreateObservationDTO } from '../types';
+import type { CulturalObservation, Country, City, CreateObservationDTO } from '../types';
 import { useAuth } from '../context/AuthContext';
 
 export const ObservationsPage = () => {
   const [observations, setObservations] = useState<CulturalObservation[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [availableCities, setAvailableCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -13,7 +15,7 @@ export const ObservationsPage = () => {
   const [filterCountryId, setFilterCountryId] = useState<number>(0);
   const [formData, setFormData] = useState<CreateObservationDTO>({
     country_id: 0,
-    city: '',
+    city_id: undefined,
     observation: '',
   });
   const { isAuthenticated, user } = useAuth();
@@ -25,12 +27,14 @@ export const ObservationsPage = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [observationsData, countriesData] = await Promise.all([
+      const [observationsData, countriesData, citiesData] = await Promise.all([
         api.getObservations(filterCountryId ? { country_id: filterCountryId } : {}),
         api.getCountries(),
+        api.getCities(),
       ]);
       setObservations(observationsData);
       setCountries(countriesData);
+      setCities(citiesData);
       setError('');
     } catch (err: any) {
       setError('Failed to load data');
@@ -38,6 +42,16 @@ export const ObservationsPage = () => {
       setLoading(false);
     }
   };
+
+  // Update available cities when country changes in form
+  useEffect(() => {
+    if (formData.country_id) {
+      const filtered = cities.filter(city => city.country_id === formData.country_id);
+      setAvailableCities(filtered);
+    } else {
+      setAvailableCities([]);
+    }
+  }, [formData.country_id, cities]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -57,7 +71,7 @@ export const ObservationsPage = () => {
   const handleEdit = (observation: CulturalObservation) => {
     setFormData({
       country_id: observation.country_id,
-      city: observation.city || '',
+      city_id: observation.city_id,
       observation: observation.observation,
     });
     setEditingId(observation.id);
@@ -77,7 +91,7 @@ export const ObservationsPage = () => {
   const resetForm = () => {
     setFormData({
       country_id: 0,
-      city: '',
+      city_id: undefined,
       observation: '',
     });
     setShowForm(false);
@@ -126,7 +140,7 @@ export const ObservationsPage = () => {
               <select
                 id="country"
                 value={formData.country_id}
-                onChange={(e) => setFormData({ ...formData, country_id: Number(e.target.value) })}
+                onChange={(e) => setFormData({ ...formData, country_id: Number(e.target.value), city_id: undefined })}
                 required
               >
                 <option value={0}>Select a country</option>
@@ -139,13 +153,19 @@ export const ObservationsPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="city">City</label>
-              <input
+              <label htmlFor="city">City (optional)</label>
+              <select
                 id="city"
-                type="text"
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-              />
+                value={formData.city_id || 0}
+                onChange={(e) => setFormData({ ...formData, city_id: Number(e.target.value) || undefined })}
+              >
+                <option value={0}>Select a city (optional)</option>
+                {availableCities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
@@ -175,7 +195,7 @@ export const ObservationsPage = () => {
             <div className="observation-header">
               <div>
                 <h3>{obs.country?.name}</h3>
-                {obs.city && <p className="city">{obs.city}</p>}
+                {obs.city && <p className="city">{obs.city.name}</p>}
               </div>
               <div className="observation-meta">
                 <span className="author">by {obs.user?.username}</span>

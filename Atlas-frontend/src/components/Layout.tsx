@@ -17,25 +17,26 @@ export const Layout = () => {
           <Link to="/">🌍 Atlas</Link>
         </div>
         <div className="nav-links">
-          <Link to="/continents">Continents</Link>
-          <Link to="/countries">Countries</Link>
-          <Link to="/observations">Observations</Link>
+          <Link to="/continents">Continentes</Link>
+          <Link to="/countries">Países</Link>
+          <Link to="/cities">Cidades</Link>
+          <Link to="/observations">Observações</Link>
         </div>
         <div className="nav-auth">
           {isAuthenticated ? (
             <>
-              <span className="user-info">Hello, {user?.username}!</span>
+              <span className="user-info">Olá, {user?.username}!</span>
               <button onClick={handleLogout} className="btn-secondary">
-                Logout
+                Sair
               </button>
             </>
           ) : (
             <>
               <Link to="/login">
-                <button className="btn-secondary">Login</button>
+                <button className="btn-secondary">Entrar</button>
               </Link>
               <Link to="/register">
-                <button>Register</button>
+                <button>Cadastrar</button>
               </Link>
             </>
           )}

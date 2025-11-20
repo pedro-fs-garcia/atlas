@@ -7,7 +7,20 @@ export const countryRouter = Router();
 
 countryRouter.get('/', async (req, res) => {
   const countries = await service.getAll();
-  return res.json(countries);
+  const formatted = countries.map((country) => ({
+    id: country.id,
+    name: country.name,
+    nativeName: country.nativeName ?? undefined,
+    population: country.population,
+    continent: country.continent?.name ?? undefined,
+    capital: country.capital?.name ?? undefined,
+    languages: country.languages ? country.languages.map((l) => l.name) : [],
+    currencies: country.currencies
+      ? country.currencies.map((c) => ({ name: c.name, symbol: c.symbol }))
+      : [],
+  }));
+
+  return res.json(formatted);
 });
 
 countryRouter.get('/:id', async (req, res) => {
@@ -16,7 +29,20 @@ countryRouter.get('/:id', async (req, res) => {
 
   const country = await service.getById(id);
   if (!country) return res.status(404).json({ message: 'Country not found' });
-  return res.json(country);
+
+  const formatted = {
+    id: country.id,
+    name: country.name,
+    nativeName: country.nativeName ?? undefined,
+    population: country.population,
+    continent: country.continent?.name ?? undefined,
+    capital: country.capital?.name ?? undefined,
+    languages: country.languages ? country.languages.map((l) => l.name) : [],
+    currencies: country.currencies ? country.currencies.map((c) => ({ name: c.name, symbol: c.symbol })) : [],
+    cities: country.cities ? country.cities.map((ct) => ({ id: ct.id, name: ct.name })) : [],
+  };
+
+  return res.json(formatted);
 });
 
 countryRouter.post('/', async (req, res) => {

@@ -20,10 +20,13 @@ export const ContinentsPage = () => {
     try {
       setLoading(true);
       const data = await api.getContinents();
+      console.log('Continents loaded:', data);
       setContinents(data);
       setError('');
     } catch (err: any) {
-      setError('Failed to load continents');
+      console.error('Error loading continents:', err);
+      console.error('Error response:', err.response);
+      setError(err.response?.data?.message || err.message || 'Falha ao carregar continentes');
     } finally {
       setLoading(false);
     }
@@ -42,7 +45,7 @@ export const ContinentsPage = () => {
       setEditingId(null);
       loadContinents();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save continent');
+      setError(err.response?.data?.message || 'Falha ao salvar continente');
     }
   };
 
@@ -53,12 +56,12 @@ export const ContinentsPage = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this continent?')) return;
+    if (!confirm('Tem certeza que deseja excluir este continente?')) return;
     try {
       await api.deleteContinent(id);
       loadContinents();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete continent');
+      setError(err.response?.data?.message || 'Falha ao excluir continente');
     }
   };
 
@@ -68,7 +71,7 @@ export const ContinentsPage = () => {
     setEditingId(null);
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) return <div className="loading">Carregando...</div>;
 
   return (
     <div className="page-container">

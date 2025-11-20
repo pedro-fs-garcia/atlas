@@ -18,12 +18,10 @@ export const postgresConfig = {
   database: process.env.POSTGRES_DB || 'atlas',
 };
 
-export const mongoConfig = {
-  uri: process.env.MONGO_URI || 'mongodb://localhost:27017/esfapp',
-};
-
-export const redisConfig = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT ?? '6379'),
-  password: process.env.REDIS_PASSWORD || '',
+export const envConfig = {
+  port,
+  logLevel,
+  nodeEnv,
+  corsOrigins,
+  postgres: postgresConfig
 };

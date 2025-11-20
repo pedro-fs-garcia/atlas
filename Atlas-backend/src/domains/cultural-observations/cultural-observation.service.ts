@@ -6,9 +6,10 @@ import { CreateObservationDTO, UpdateObservationDTO } from './dto/observation.dt
 export class CulturalObservationService {
   private repository: Repository<CulturalObservation> = AppDataSource.getRepository(CulturalObservation);
 
-  async getAll(filters?: { country_id?: number; user_id?: number }): Promise<CulturalObservation[]> {
+  async getAll(filters?: { country_id?: number; user_id?: number; city_id?: number }): Promise<CulturalObservation[]> {
     const query = this.repository.createQueryBuilder('observation')
       .leftJoinAndSelect('observation.country', 'country')
+      .leftJoinAndSelect('observation.city', 'city')
       .leftJoinAndSelect('observation.user', 'user');
 
     if (filters?.country_id) {
@@ -19,13 +20,17 @@ export class CulturalObservationService {
       query.andWhere('observation.user_id = :user_id', { user_id: filters.user_id });
     }
 
+    if (filters?.city_id) {
+      query.andWhere('observation.city_id = :city_id', { city_id: filters.city_id });
+    }
+
     return query.orderBy('observation.created_at', 'DESC').getMany();
   }
 
   async getById(id: number): Promise<CulturalObservation | null> {
     return this.repository.findOne({
       where: { id },
-      relations: ['country', 'user'],
+      relations: ['country', 'city', 'user'],
     });
   }
 

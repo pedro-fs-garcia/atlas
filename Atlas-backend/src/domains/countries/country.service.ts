@@ -8,11 +8,11 @@ export class CountryService {
 
   async getAll(): Promise<Country[]> {
     // include continent relation for convenience
-    return this.repository.find({ relations: ['continent'] });
+    return this.repository.find({ relations: ['continent', 'languages', 'currencies', 'cities', 'capital'] });
   }
 
   async getById(id: number): Promise<Country | null> {
-    return this.repository.findOne({ where: { id }, relations: ['continent'] });
+    return this.repository.findOne({ where: { id }, relations: ['continent', 'languages', 'currencies', 'cities', 'capital'] });
   }
 
   async create(dto: CreateCountryDTO): Promise<Country> {

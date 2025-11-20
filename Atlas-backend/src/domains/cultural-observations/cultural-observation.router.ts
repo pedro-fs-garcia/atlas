@@ -20,6 +20,10 @@ culturalObservationRouter.get('/', async (req, res) => {
       filters.user_id = Number(req.query.user_id);
     }
 
+    if (req.query.city_id) {
+      filters.city_id = Number(req.query.city_id);
+    }
+
     const observations = await service.getAll(filters);
     return res.json(observations);
   } catch (err: any) {

@@ -1,10 +1,10 @@
 export type CreateObservationDTO = {
   country_id: number;
-  city?: string;
+  city_id?: number;
   observation: string;
 };
 
 export type UpdateObservationDTO = {
-  city?: string;
+  city_id?: number;
   observation?: string;
 };

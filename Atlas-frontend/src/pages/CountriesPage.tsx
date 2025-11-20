@@ -1,11 +1,12 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { api } from '../services/api';
-import type { Country, Continent, CreateCountryDTO } from '../types';
+import type { Country, Continent, CreateCountryDTO, RestCountryData } from '../types';
 import { useAuth } from '../context/AuthContext';
 
 export const CountriesPage = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [continents, setContinents] = useState<Continent[]>([]);
+  const [countryFlags, setCountryFlags] = useState<{ [countryName: string]: RestCountryData | null }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -37,6 +38,16 @@ export const CountriesPage = () => {
       setError('Failed to load data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCountryFlag = async (countryName: string) => {
+    try {
+      const flagData = await api.getCountryInfo(countryName);
+      setCountryFlags((prev) => ({ ...prev, [countryName]: flagData }));
+    } catch (err) {
+      console.error(`Failed to load flag for ${countryName}:`, err);
+      setCountryFlags((prev) => ({ ...prev, [countryName]: null }));
     }
   };
 
@@ -180,6 +191,25 @@ export const CountriesPage = () => {
       <div className="cards-grid">
         {countries.map((country) => (
           <div key={country.id} className="card">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              {countryFlags[country.name] === undefined && (
+                <button
+                  onClick={() => loadCountryFlag(country.name)}
+                  className="btn-small"
+                  style={{ marginLeft: 'auto' }}
+                >
+                  Load Flag
+                </button>
+              )}
+              {countryFlags[country.name] && (
+                <img
+                  src={countryFlags[country.name]!.flags.png}
+                  alt={`${country.name} flag`}
+                  style={{ width: '48px', height: '32px', objectFit: 'cover', borderRadius: '3px', marginLeft: 'auto' }}
+                  title={countryFlags[country.name]!.flags.alt || country.name}
+                />
+              )}
+            </div>
             <h3>{country.name}</h3>
             <div className="country-details">
               <p><strong>Population:</strong> {country.population.toLocaleString()}</p>

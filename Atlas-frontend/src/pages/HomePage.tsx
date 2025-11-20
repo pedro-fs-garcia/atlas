@@ -6,32 +6,32 @@ export const HomePage = () => {
 
   return (
     <div className="home-container">
-      <h1>Welcome to Atlas</h1>
+      <h1>Bem-vindo ao Atlas</h1>
       {isAuthenticated ? (
         <div className="welcome-message">
-          <p>Hello, {user?.username}! Explore the world and share your cultural observations.</p>
+          <p>Olá, {user?.username}! Explore o mundo e compartilhe suas observações culturais.</p>
           <div className="home-actions">
             <Link to="/continents">
-              <button>Browse Continents</button>
+              <button>Explorar Continentes</button>
             </Link>
             <Link to="/countries">
-              <button>Browse Countries</button>
+              <button>Explorar Países</button>
             </Link>
             <Link to="/observations">
-              <button>Cultural Observations</button>
+              <button>Observações Culturais</button>
             </Link>
           </div>
         </div>
       ) : (
         <div className="welcome-message">
-          <p>Discover continents, countries, and cultural observations from around the world.</p>
-          <p>Login or register to contribute your own observations!</p>
+          <p>Descubra continentes, países e observações culturais de todo o mundo.</p>
+          <p>Entre ou cadastre-se para contribuir com suas próprias observações!</p>
           <div className="home-actions">
             <Link to="/login">
-              <button>Login</button>
+              <button>Entrar</button>
             </Link>
             <Link to="/register">
-              <button className="btn-secondary">Register</button>
+              <button className="btn-secondary">Cadastrar</button>
             </Link>
           </div>
         </div>

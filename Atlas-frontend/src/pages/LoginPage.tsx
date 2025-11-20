@@ -19,7 +19,7 @@ export const LoginPage = () => {
       await login({ email, password });
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to login');
+      setError(err.response?.data?.message || 'Falha ao fazer login');
     } finally {
       setLoading(false);
     }
@@ -28,12 +28,12 @@ export const LoginPage = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Login</h1>
+        <h1>Entrar</h1>
         <form onSubmit={handleSubmit}>
           {error && <div className="error-message">{error}</div>}
-          
+
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">E-mail</label>
             <input
               id="email"
               type="email"
@@ -45,7 +45,7 @@ export const LoginPage = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Senha</label>
             <input
               id="password"
               type="password"
@@ -57,12 +57,12 @@ export const LoginPage = () => {
           </div>
 
           <button type="submit" disabled={loading}>
-            {loading ? 'Loading...' : 'Login'}
+            {loading ? 'Carregando...' : 'Entrar'}
           </button>
         </form>
 
         <p className="auth-link">
-          Don't have an account? <Link to="/register">Register here</Link>
+          Não tem uma conta? <Link to="/register">Cadastre-se aqui</Link>
         </p>
       </div>
     </div>

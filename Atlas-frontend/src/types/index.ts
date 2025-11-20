@@ -27,15 +27,26 @@ export interface Country {
   continent?: Continent;
 }
 
+export interface City {
+  id: number;
+  name: string;
+  population: number;
+  latitude: number;
+  longitude: number;
+  country_id: number;
+  country?: Country;
+}
+
 export interface CulturalObservation {
   id: number;
   country_id: number;
+  city_id?: number;
   user_id: number;
-  city?: string;
   observation: string;
   created_at: string;
   updated_at: string;
   country?: Country;
+  city?: City;
   user?: User;
 }
 
@@ -63,8 +74,56 @@ export interface CreateCountryDTO {
   continent_id: number;
 }
 
+export interface CreateCityDTO {
+  name: string;
+  population: number;
+  latitude: number;
+  longitude: number;
+  country_id: number;
+}
+
 export interface CreateObservationDTO {
   country_id: number;
-  city?: string;
+  city_id?: number;
   observation: string;
+}
+
+// External APIs types
+export interface WeatherData {
+  current: {
+    temperature_2m: number;
+    relative_humidity_2m: number;
+    apparent_temperature: number;
+    precipitation: number;
+    weather_code: number;
+    weather_description: string;
+    wind_speed_10m: number;
+    wind_direction_10m: number;
+  };
+  current_units: {
+    temperature_2m: string;
+    relative_humidity_2m: string;
+    apparent_temperature: string;
+    precipitation: string;
+    wind_speed_10m: string;
+  };
+}
+
+export interface RestCountryData {
+  name: {
+    common: string;
+    official: string;
+  };
+  population: number;
+  flags: {
+    png: string;
+    svg: string;
+    alt?: string;
+  };
+  capital?: string[];
+  region: string;
+  languages?: { [key: string]: string };
+  currencies?: { [key: string]: { name: string; symbol: string } };
+  timezones?: string[];
+  latlng?: number[];
 }

@@ -7,3 +7,4 @@ export type CreateCountryDTO = {
 }
 
 export type UpdateCountryDTO = Partial<CreateCountryDTO>
+
