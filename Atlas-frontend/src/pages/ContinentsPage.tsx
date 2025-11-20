@@ -76,9 +76,9 @@ export const ContinentsPage = () => {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>Continents</h1>
+        <h1>Continentes</h1>
         {isAuthenticated && !showForm && (
-          <button onClick={() => setShowForm(true)}>Add Continent</button>
+          <button onClick={() => setShowForm(true)}>Adicionar Continente</button>
         )}
       </div>
 
@@ -86,10 +86,10 @@ export const ContinentsPage = () => {
 
       {showForm && (
         <div className="form-card">
-          <h2>{editingId ? 'Edit Continent' : 'New Continent'}</h2>
+          <h2>{editingId ? 'Editar Continente' : 'Novo Continente'}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Name *</label>
+              <label htmlFor="name">Nome *</label>
               <input
                 id="name"
                 type="text"
@@ -100,7 +100,7 @@ export const ContinentsPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">Descrição</label>
               <textarea
                 id="description"
                 value={formData.description}
@@ -110,9 +110,9 @@ export const ContinentsPage = () => {
             </div>
 
             <div className="form-actions">
-              <button type="submit">Save</button>
+              <button type="submit">Salvar</button>
               <button type="button" onClick={handleCancel} className="btn-secondary">
-                Cancel
+                Cancelar
               </button>
             </div>
           </form>
@@ -127,13 +127,13 @@ export const ContinentsPage = () => {
             {isAuthenticated && (
               <div className="card-actions">
                 <button onClick={() => handleEdit(continent)} className="btn-small">
-                  Edit
+                  Editar
                 </button>
                 <button
                   onClick={() => handleDelete(continent.id)}
                   className="btn-small btn-danger"
                 >
-                  Delete
+                  Excluir
                 </button>
               </div>
             )}
@@ -142,7 +142,7 @@ export const ContinentsPage = () => {
       </div>
 
       {continents.length === 0 && !showForm && (
-        <p className="empty-message">No continents found. Add one to get started!</p>
+        <p className="empty-message">Nenhum continente encontrado. Adicione um para começar!</p>
       )}
     </div>
   );

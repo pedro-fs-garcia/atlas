@@ -35,7 +35,7 @@ export const CountriesPage = () => {
       setContinents(continentsData);
       setError('');
     } catch (err: any) {
-      setError('Failed to load data');
+      setError('Falha ao carregar dados');
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,7 @@ export const CountriesPage = () => {
       resetForm();
       loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save country');
+      setError(err.response?.data?.message || 'Falha ao salvar país');
     }
   };
 
@@ -79,12 +79,12 @@ export const CountriesPage = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this country?')) return;
+    if (!confirm('Tem certeza que deseja excluir este país?')) return;
     try {
       await api.deleteCountry(id);
       loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete country');
+      setError(err.response?.data?.message || 'Falha ao excluir país');
     }
   };
 
@@ -100,14 +100,14 @@ export const CountriesPage = () => {
     setEditingId(null);
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) return <div className="loading">Carregando...</div>;
 
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>Countries</h1>
+        <h1>Países</h1>
         {isAuthenticated && !showForm && (
-          <button onClick={() => setShowForm(true)}>Add Country</button>
+          <button onClick={() => setShowForm(true)}>Adicionar País</button>
         )}
       </div>
 
@@ -115,10 +115,10 @@ export const CountriesPage = () => {
 
       {showForm && (
         <div className="form-card">
-          <h2>{editingId ? 'Edit Country' : 'New Country'}</h2>
+          <h2>{editingId ? 'Editar País' : 'Novo País'}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Name *</label>
+              <label htmlFor="name">Nome *</label>
               <input
                 id="name"
                 type="text"
@@ -129,7 +129,7 @@ export const CountriesPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="population">Population *</label>
+              <label htmlFor="population">População *</label>
               <input
                 id="population"
                 type="number"
@@ -140,7 +140,7 @@ export const CountriesPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="language">Language *</label>
+              <label htmlFor="language">Idioma *</label>
               <input
                 id="language"
                 type="text"
@@ -151,7 +151,7 @@ export const CountriesPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="currency">Currency *</label>
+              <label htmlFor="currency">Moeda *</label>
               <input
                 id="currency"
                 type="text"
@@ -162,14 +162,14 @@ export const CountriesPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="continent">Continent *</label>
+              <label htmlFor="continent">Continente *</label>
               <select
                 id="continent"
                 value={formData.continent_id}
                 onChange={(e) => setFormData({ ...formData, continent_id: Number(e.target.value) })}
                 required
               >
-                <option value={0}>Select a continent</option>
+                <option value={0}>Selecione um continente</option>
                 {continents.map((continent) => (
                   <option key={continent.id} value={continent.id}>
                     {continent.name}
@@ -179,9 +179,9 @@ export const CountriesPage = () => {
             </div>
 
             <div className="form-actions">
-              <button type="submit">Save</button>
+              <button type="submit">Salvar</button>
               <button type="button" onClick={resetForm} className="btn-secondary">
-                Cancel
+                Cancelar
               </button>
             </div>
           </form>
@@ -198,7 +198,7 @@ export const CountriesPage = () => {
                   className="btn-small"
                   style={{ marginLeft: 'auto' }}
                 >
-                  Load Flag
+                  Carregar Bandeira
                 </button>
               )}
               {countryFlags[country.name] && (
@@ -212,21 +212,21 @@ export const CountriesPage = () => {
             </div>
             <h3>{country.name}</h3>
             <div className="country-details">
-              <p><strong>Population:</strong> {country.population.toLocaleString()}</p>
-              <p><strong>Language:</strong> {country.language}</p>
-              <p><strong>Currency:</strong> {country.currency}</p>
-              <p><strong>Continent:</strong> {country.continent?.name || 'N/A'}</p>
+              <p><strong>População:</strong> {country.population.toLocaleString()}</p>
+              <p><strong>Idioma:</strong> {country.language}</p>
+              <p><strong>Moeda:</strong> {country.currency}</p>
+              <p><strong>Continente:</strong> {country.continent?.name || 'N/D'}</p>
             </div>
             {isAuthenticated && (
               <div className="card-actions">
                 <button onClick={() => handleEdit(country)} className="btn-small">
-                  Edit
+                  Editar
                 </button>
                 <button
                   onClick={() => handleDelete(country.id)}
                   className="btn-small btn-danger"
                 >
-                  Delete
+                  Excluir
                 </button>
               </div>
             )}
@@ -235,7 +235,7 @@ export const CountriesPage = () => {
       </div>
 
       {countries.length === 0 && !showForm && (
-        <p className="empty-message">No countries found. Add one to get started!</p>
+        <p className="empty-message">Nenhum país encontrado. Adicione um para começar!</p>
       )}
     </div>
   );

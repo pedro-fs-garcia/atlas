@@ -35,7 +35,7 @@ export const CitiesPage = () => {
       setCountries(countriesData);
       setError('');
     } catch (err: any) {
-      setError('Failed to load data');
+      setError('Falha ao carregar dados');
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,7 @@ export const CitiesPage = () => {
       resetForm();
       loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save city');
+      setError(err.response?.data?.message || 'Falha ao salvar cidade');
     }
   };
 
@@ -79,12 +79,12 @@ export const CitiesPage = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this city?')) return;
+    if (!confirm('Tem certeza que deseja excluir esta cidade?')) return;
     try {
       await api.deleteCity(id);
       loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete city');
+      setError(err.response?.data?.message || 'Falha ao excluir cidade');
     }
   };
 
@@ -100,14 +100,14 @@ export const CitiesPage = () => {
     setEditingId(null);
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) return <div className="loading">Carregando...</div>;
 
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>Cities</h1>
+        <h1>Cidades</h1>
         {isAuthenticated && !showForm && (
-          <button onClick={() => setShowForm(true)}>Add City</button>
+          <button onClick={() => setShowForm(true)}>Adicionar Cidade</button>
         )}
       </div>
 
@@ -115,10 +115,10 @@ export const CitiesPage = () => {
 
       {showForm && (
         <div className="form-card">
-          <h2>{editingId ? 'Edit City' : 'New City'}</h2>
+          <h2>{editingId ? 'Editar Cidade' : 'Nova Cidade'}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Name *</label>
+              <label htmlFor="name">Nome *</label>
               <input
                 id="name"
                 type="text"
@@ -129,7 +129,7 @@ export const CitiesPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="population">Population *</label>
+              <label htmlFor="population">População *</label>
               <input
                 id="population"
                 type="number"
@@ -164,14 +164,14 @@ export const CitiesPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="country">Country *</label>
+              <label htmlFor="country">País *</label>
               <select
                 id="country"
                 value={formData.country_id}
                 onChange={(e) => setFormData({ ...formData, country_id: Number(e.target.value) })}
                 required
               >
-                <option value={0}>Select a country</option>
+                <option value={0}>Selecione um país</option>
                 {countries.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
@@ -181,9 +181,9 @@ export const CitiesPage = () => {
             </div>
 
             <div className="form-actions">
-              <button type="submit">Save</button>
+              <button type="submit">Salvar</button>
               <button type="button" onClick={resetForm} className="btn-secondary">
-                Cancel
+                Cancelar
               </button>
             </div>
           </form>
@@ -195,9 +195,9 @@ export const CitiesPage = () => {
           <div key={city.id} className="card">
             <h3>{city.name}</h3>
             <div className="city-details">
-              <p><strong>Population:</strong> {city.population.toLocaleString()}</p>
-              <p><strong>Coordinates:</strong> {city.latitude.toFixed(4)}, {city.longitude.toFixed(4)}</p>
-              <p><strong>Country:</strong> {city.country?.name || 'N/A'}</p>
+              <p><strong>População:</strong> {city.population.toLocaleString()}</p>
+              <p><strong>Coordenadas:</strong> {city.latitude.toFixed(4)}, {city.longitude.toFixed(4)}</p>
+              <p><strong>País:</strong> {city.country?.name || 'N/D'}</p>
 
               {weather[city.id] === undefined && (
                 <button
@@ -205,35 +205,35 @@ export const CitiesPage = () => {
                   className="btn-small"
                   style={{ marginTop: '10px' }}
                 >
-                  Load Weather
+                  Carregar Clima
                 </button>
               )}
 
               {weather[city.id] && (
                 <div className="weather-info" style={{ marginTop: '10px', padding: '10px', background: '#f0f8ff', borderRadius: '5px' }}>
-                  <p><strong>Weather:</strong></p>
-                  <p>Temperature: {weather[city.id]!.current.temperature_2m}°C</p>
-                  <p>Feels like: {weather[city.id]!.current.apparent_temperature}°C</p>
-                  <p>Condition: {weather[city.id]!.current.weather_description}</p>
-                  <p>Humidity: {weather[city.id]!.current.relative_humidity_2m}%</p>
-                  <p>Wind: {weather[city.id]!.current.wind_speed_10m} km/h</p>
+                  <p><strong>Clima:</strong></p>
+                  <p>Temperatura: {weather[city.id]!.current.temperature_2m}°C</p>
+                  <p>Sensação térmica: {weather[city.id]!.current.apparent_temperature}°C</p>
+                  <p>Condição: {weather[city.id]!.current.weather_description}</p>
+                  <p>Umidade: {weather[city.id]!.current.relative_humidity_2m}%</p>
+                  <p>Vento: {weather[city.id]!.current.wind_speed_10m} km/h</p>
                 </div>
               )}
 
               {weather[city.id] === null && (
-                <p style={{ color: '#888', fontSize: '0.9em' }}>Weather data not available</p>
+                <p style={{ color: '#888', fontSize: '0.9em' }}>Dados climáticos não disponíveis</p>
               )}
             </div>
             {isAuthenticated && (
               <div className="card-actions">
                 <button onClick={() => handleEdit(city)} className="btn-small">
-                  Edit
+                  Editar
                 </button>
                 <button
                   onClick={() => handleDelete(city.id)}
                   className="btn-small btn-danger"
                 >
-                  Delete
+                  Excluir
                 </button>
               </div>
             )}
@@ -242,7 +242,7 @@ export const CitiesPage = () => {
       </div>
 
       {cities.length === 0 && !showForm && (
-        <p className="empty-message">No cities found. Add one to get started!</p>
+        <p className="empty-message">Nenhuma cidade encontrada. Adicione uma para começar!</p>
       )}
     </div>
   );

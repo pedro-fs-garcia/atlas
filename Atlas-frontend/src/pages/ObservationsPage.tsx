@@ -37,7 +37,7 @@ export const ObservationsPage = () => {
       setCities(citiesData);
       setError('');
     } catch (err: any) {
-      setError('Failed to load data');
+      setError('Falha ao carregar dados');
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export const ObservationsPage = () => {
       resetForm();
       loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save observation');
+      setError(err.response?.data?.message || 'Falha ao salvar observação');
     }
   };
 
@@ -79,12 +79,12 @@ export const ObservationsPage = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this observation?')) return;
+    if (!confirm('Tem certeza que deseja excluir esta observação?')) return;
     try {
       await api.deleteObservation(id);
       loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete observation');
+      setError(err.response?.data?.message || 'Falha ao excluir observação');
     }
   };
 
@@ -102,27 +102,27 @@ export const ObservationsPage = () => {
     return user && observation.user_id === user.id;
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) return <div className="loading">Carregando...</div>;
 
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>Cultural Observations</h1>
+        <h1>Observações Culturais</h1>
         {isAuthenticated && !showForm && (
-          <button onClick={() => setShowForm(true)}>Add Observation</button>
+          <button onClick={() => setShowForm(true)}>Adicionar Observação</button>
         )}
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       <div className="filter-section">
-        <label htmlFor="filter">Filter by Country:</label>
+        <label htmlFor="filter">Filtrar por País:</label>
         <select
           id="filter"
           value={filterCountryId}
           onChange={(e) => setFilterCountryId(Number(e.target.value))}
         >
-          <option value={0}>All Countries</option>
+          <option value={0}>Todos os Países</option>
           {countries.map((country) => (
             <option key={country.id} value={country.id}>
               {country.name}
@@ -133,17 +133,17 @@ export const ObservationsPage = () => {
 
       {showForm && (
         <div className="form-card">
-          <h2>{editingId ? 'Edit Observation' : 'New Observation'}</h2>
+          <h2>{editingId ? 'Editar Observação' : 'Nova Observação'}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="country">Country *</label>
+              <label htmlFor="country">País *</label>
               <select
                 id="country"
                 value={formData.country_id}
                 onChange={(e) => setFormData({ ...formData, country_id: Number(e.target.value), city_id: undefined })}
                 required
               >
-                <option value={0}>Select a country</option>
+                <option value={0}>Selecione um país</option>
                 {countries.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
@@ -153,13 +153,13 @@ export const ObservationsPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="city">City (optional)</label>
+              <label htmlFor="city">Cidade (opcional)</label>
               <select
                 id="city"
                 value={formData.city_id || 0}
                 onChange={(e) => setFormData({ ...formData, city_id: Number(e.target.value) || undefined })}
               >
-                <option value={0}>Select a city (optional)</option>
+                <option value={0}>Selecione uma cidade (opcional)</option>
                 {availableCities.map((city) => (
                   <option key={city.id} value={city.id}>
                     {city.name}
@@ -169,7 +169,7 @@ export const ObservationsPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="observation">Observation *</label>
+              <label htmlFor="observation">Observação *</label>
               <textarea
                 id="observation"
                 value={formData.observation}
@@ -180,9 +180,9 @@ export const ObservationsPage = () => {
             </div>
 
             <div className="form-actions">
-              <button type="submit">Save</button>
+              <button type="submit">Salvar</button>
               <button type="button" onClick={resetForm} className="btn-secondary">
-                Cancel
+                Cancelar
               </button>
             </div>
           </form>
@@ -198,21 +198,21 @@ export const ObservationsPage = () => {
                 {obs.city && <p className="city">{obs.city.name}</p>}
               </div>
               <div className="observation-meta">
-                <span className="author">by {obs.user?.username}</span>
-                <span className="date">{new Date(obs.created_at).toLocaleDateString()}</span>
+                <span className="author">por {obs.user?.username}</span>
+                <span className="date">{new Date(obs.created_at).toLocaleDateString('pt-BR')}</span>
               </div>
             </div>
             <p className="observation-text">{obs.observation}</p>
             {canEdit(obs) && (
               <div className="card-actions">
                 <button onClick={() => handleEdit(obs)} className="btn-small">
-                  Edit
+                  Editar
                 </button>
                 <button
                   onClick={() => handleDelete(obs.id)}
                   className="btn-small btn-danger"
                 >
-                  Delete
+                  Excluir
                 </button>
               </div>
             )}
@@ -222,7 +222,7 @@ export const ObservationsPage = () => {
 
       {observations.length === 0 && !showForm && (
         <p className="empty-message">
-          No observations found. {isAuthenticated ? 'Add one to get started!' : 'Login to add observations.'}
+          Nenhuma observação encontrada. {isAuthenticated ? 'Adicione uma para começar!' : 'Entre para adicionar observações.'}
         </p>
       )}
     </div>
