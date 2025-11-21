@@ -117,16 +117,18 @@ export const ObservationsPage = () => {
 
       <div className="filter-section">
         <label htmlFor="filter">Filtrar por País:</label>
-        <select
+          <select
           id="filter"
           value={filterCountryId}
           onChange={(e) => setFilterCountryId(Number(e.target.value))}
         >
           <option value={0}>Todos os Países</option>
-          {countries.map((country) => (
-            <option key={country.id} value={country.id}>
-              {country.name}
-            </option>
+          {[...countries]
+            .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }))
+            .map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.name}
+              </option>
           ))}
         </select>
       </div>
@@ -144,10 +146,12 @@ export const ObservationsPage = () => {
                 required
               >
                 <option value={0}>Selecione um país</option>
-                {countries.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
-                  </option>
+                {[...countries]
+                  .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }))
+                  .map((country) => (
+                    <option key={country.id} value={country.id}>
+                      {country.name}
+                    </option>
                 ))}
               </select>
             </div>

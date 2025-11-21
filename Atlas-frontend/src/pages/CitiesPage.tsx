@@ -1,12 +1,15 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { api } from '../services/api';
-import type { City, Country, CreateCityDTO, WeatherData } from '../types';
+import type { City, Country, CreateCityDTO, WeatherSimple } from '../types';
 import { useAuth } from '../context/AuthContext';
 
 export const CitiesPage = () => {
+  console.log('CitiesPage: Componente renderizado');
+
   const [cities, setCities] = useState<City[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
-  const [weather, setWeather] = useState<{ [cityId: number]: WeatherData | null }>({});
+  const [weather, setWeather] = useState<{ [cityId: number]: WeatherSimple | null }>({});
+  const [weatherLoading, setWeatherLoading] = useState<{ [cityId: number]: boolean }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -27,15 +30,18 @@ export const CitiesPage = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError('');
       const [citiesData, countriesData] = await Promise.all([
         api.getCities(),
         api.getCountries(),
       ]);
-      setCities(citiesData);
-      setCountries(countriesData);
-      setError('');
+      setCities(Array.isArray(citiesData) ? citiesData : []);
+      setCountries(Array.isArray(countriesData) ? countriesData : []);
     } catch (err: any) {
-      setError('Falha ao carregar dados');
+      console.error('Erro ao carregar dados:', err);
+      setError(err.response?.data?.message || err.message || 'Falha ao carregar dados. Verifique se o backend está rodando.');
+      setCities([]);
+      setCountries([]);
     } finally {
       setLoading(false);
     }
@@ -43,11 +49,15 @@ export const CitiesPage = () => {
 
   const loadWeather = async (city: City) => {
     try {
-      const weatherData = await api.getWeatherByCoordinates(city.latitude, city.longitude);
+      setWeatherLoading((s) => ({ ...s, [city.id]: true }));
+      // Request wttr.in by city name (simplified)
+      const weatherData = await api.getWeather(city.name);
       setWeather((prev) => ({ ...prev, [city.id]: weatherData }));
     } catch (err) {
       console.error(`Failed to load weather for ${city.name}:`, err);
       setWeather((prev) => ({ ...prev, [city.id]: null }));
+    } finally {
+      setWeatherLoading((s) => ({ ...s, [city.id]: false }));
     }
   };
 
@@ -100,7 +110,16 @@ export const CitiesPage = () => {
     setEditingId(null);
   };
 
-  if (loading) return <div className="loading">Carregando...</div>;
+  if (loading) {
+    console.log('CitiesPage: Estado de loading');
+    return (
+      <div className="page-container">
+        <div className="loading">Carregando cidades...</div>
+      </div>
+    );
+  }
+
+  console.log('CitiesPage: Renderizando página', { citiesCount: cities.length, countriesCount: countries.length, error });
 
   return (
     <div className="page-container">
@@ -111,7 +130,15 @@ export const CitiesPage = () => {
         )}
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="error-message">
+          <strong>Erro:</strong> {error}
+          <br />
+          <button onClick={loadData} style={{ marginTop: '10px' }}>
+            Tentar novamente
+          </button>
+        </div>
+      )}
 
       {showForm && (
         <div className="form-card">
@@ -195,11 +222,13 @@ export const CitiesPage = () => {
           <div key={city.id} className="card">
             <h3>{city.name}</h3>
             <div className="city-details">
-              <p><strong>População:</strong> {city.population.toLocaleString()}</p>
-              <p><strong>Coordenadas:</strong> {city.latitude.toFixed(4)}, {city.longitude.toFixed(4)}</p>
+              <p><strong>População:</strong> {Number(city.population).toLocaleString()}</p>
+              <p><strong>Coordenadas:</strong> {Number(city.latitude).toFixed(4)}, {Number(city.longitude).toFixed(4)}</p>
               <p><strong>País:</strong> {city.country?.name || 'N/D'}</p>
 
-              {weather[city.id] === undefined && (
+              {weatherLoading[city.id] ? (
+                <div style={{ marginTop: '10px', color: '#999' }} className="small-loading">Carregando...</div>
+              ) : weather[city.id] === undefined ? (
                 <button
                   onClick={() => loadWeather(city)}
                   className="btn-small"
@@ -207,16 +236,14 @@ export const CitiesPage = () => {
                 >
                   Carregar Clima
                 </button>
-              )}
+              ) : null}
 
               {weather[city.id] && (
-                <div className="weather-info" style={{ marginTop: '10px', padding: '10px', background: '#f0f8ff', borderRadius: '5px' }}>
+                <div className="weather-info" style={{ marginTop: '10px', padding: '10px', background: '#16212bff', borderRadius: '5px' }}>
                   <p><strong>Clima:</strong></p>
-                  <p>Temperatura: {weather[city.id]!.current.temperature_2m}°C</p>
-                  <p>Sensação térmica: {weather[city.id]!.current.apparent_temperature}°C</p>
-                  <p>Condição: {weather[city.id]!.current.weather_description}</p>
-                  <p>Umidade: {weather[city.id]!.current.relative_humidity_2m}%</p>
-                  <p>Vento: {weather[city.id]!.current.wind_speed_10m} km/h</p>
+                  <p>Temperatura: {weather[city.id]!.temp_C}°C</p>
+                  <p>Sensação térmica: {weather[city.id]!.FeelsLikeC}°C</p>
+                  <p>Umidade: {weather[city.id]!.humidity}%</p>
                 </div>
               )}
 

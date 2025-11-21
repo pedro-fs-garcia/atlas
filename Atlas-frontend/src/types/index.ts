@@ -127,3 +127,10 @@ export interface RestCountryData {
   timezones?: string[];
   latlng?: number[];
 }
+
+// Simplified weather data from wttr.in (current_condition[0])
+export interface WeatherSimple {
+  FeelsLikeC: string;
+  humidity: string;
+  temp_C: string;
+}

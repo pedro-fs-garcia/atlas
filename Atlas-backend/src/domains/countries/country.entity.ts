@@ -21,6 +21,9 @@ export class Country {
     @Column({type: 'int', nullable: false})
     continent_id!: number;
 
+    @Column({type: 'varchar', nullable: true, length: 255})
+    flag_url?: string;
+
     @ManyToOne(() => Continent, {nullable: false, onDelete: 'CASCADE'})
     @JoinColumn({name:'continent_id'})
     continent!: Continent;

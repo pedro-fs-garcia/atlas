@@ -7,9 +7,11 @@ export const ContinentsPage = () => {
   const [continents, setContinents] = useState<Continent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<CreateContinentDTO>({ name: '', description: '' });
+
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -20,12 +22,9 @@ export const ContinentsPage = () => {
     try {
       setLoading(true);
       const data = await api.getContinents();
-      console.log('Continents loaded:', data);
       setContinents(data);
       setError('');
     } catch (err: any) {
-      console.error('Error loading continents:', err);
-      console.error('Error response:', err.response);
       setError(err.response?.data?.message || err.message || 'Falha ao carregar continentes');
     } finally {
       setLoading(false);
@@ -40,18 +39,18 @@ export const ContinentsPage = () => {
       } else {
         await api.createContinent(formData);
       }
-      setFormData({ name: '', description: '' });
       setShowForm(false);
       setEditingId(null);
+      setFormData({ name: '', description: '' });
       loadContinents();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Falha ao salvar continente');
     }
   };
 
-  const handleEdit = (continent: Continent) => {
-    setFormData({ name: continent.name, description: continent.description || '' });
-    setEditingId(continent.id);
+  const handleEdit = (c: Continent) => {
+    setFormData({ name: c.name, description: c.description ?? '' });
+    setEditingId(c.id);
     setShowForm(true);
   };
 
@@ -65,21 +64,19 @@ export const ContinentsPage = () => {
     }
   };
 
-  const handleCancel = () => {
-    setFormData({ name: '', description: '' });
-    setShowForm(false);
-    setEditingId(null);
-  };
-
   if (loading) return <div className="loading">Carregando...</div>;
 
   return (
     <div className="page-container">
       <div className="page-header">
         <h1>Continentes</h1>
-        {isAuthenticated && !showForm && (
-          <button onClick={() => setShowForm(true)}>Adicionar Continente</button>
-        )}
+        <div>
+          {isAuthenticated ? (
+            <button onClick={() => { setShowForm(true); setEditingId(null); setFormData({ name: '', description: '' }); }}>Adicionar Continente</button>
+          ) : (
+            <small>Entre para gerenciar continentes.</small>
+          )}
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -89,31 +86,16 @@ export const ContinentsPage = () => {
           <h2>{editingId ? 'Editar Continente' : 'Novo Continente'}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Nome *</label>
-              <input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-              />
+              <label>Nome *</label>
+              <input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
             </div>
-
             <div className="form-group">
-              <label htmlFor="description">Descrição</label>
-              <textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={3}
-              />
+              <label>Descrição</label>
+              <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
             </div>
-
             <div className="form-actions">
               <button type="submit">Salvar</button>
-              <button type="button" onClick={handleCancel} className="btn-secondary">
-                Cancelar
-              </button>
+              <button type="button" className="btn-secondary" onClick={() => { setShowForm(false); setEditingId(null); }}>Cancelar</button>
             </div>
           </form>
         </div>
@@ -122,27 +104,24 @@ export const ContinentsPage = () => {
       <div className="cards-grid">
         {continents.map((continent) => (
           <div key={continent.id} className="card">
-            <h3>{continent.name}</h3>
-            {continent.description && <p>{continent.description}</p>}
-            {isAuthenticated && (
-              <div className="card-actions">
-                <button onClick={() => handleEdit(continent)} className="btn-small">
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleDelete(continent.id)}
-                  className="btn-small btn-danger"
-                >
-                  Excluir
-                </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+              <div>
+                <h3>{continent.name}</h3>
+                {continent.description && <p>{continent.description}</p>}
               </div>
-            )}
+              {isAuthenticated && (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="btn-small" onClick={() => handleEdit(continent)}>Editar</button>
+                  <button className="btn-small btn-danger" onClick={() => handleDelete(continent.id)}>Excluir</button>
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
-      {continents.length === 0 && !showForm && (
-        <p className="empty-message">Nenhum continente encontrado. Adicione um para começar!</p>
+      {continents.length === 0 && (
+        <p className="empty-message">Nenhum continente encontrado.</p>
       )}
     </div>
   );

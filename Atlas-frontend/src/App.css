@@ -61,6 +61,7 @@
   text-align: center;
   padding: 3rem 1rem;
 }
+/* Home page uses a local CSS file to avoid global layout conflicts. */
 
 .home-container h1 {
   font-size: 3rem;
@@ -270,6 +271,11 @@ button:disabled {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.city-details p {
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
 /* Observations */
 .filter-section {
   margin-bottom: 2rem;
@@ -390,6 +396,12 @@ button:disabled {
     flex-direction: column;
   }
 
+  .home-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .explain-grid { grid-template-columns: 1fr; }
+
   .observation-header {
     flex-direction: column;
     gap: 0.5rem;
@@ -432,6 +444,7 @@ button:disabled {
   }
 
   .country-details p,
+  .city-details p,
   .observation-text {
     color: #333;
   }

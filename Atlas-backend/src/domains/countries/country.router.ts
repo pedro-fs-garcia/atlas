@@ -13,6 +13,7 @@ countryRouter.get('/', async (req, res) => {
     nativeName: country.nativeName ?? undefined,
     population: country.population,
     continent: country.continent?.name ?? undefined,
+    flagUrl: country.flag_url ?? undefined,
     capital: country.capital?.name ?? undefined,
     languages: country.languages ? country.languages.map((l) => l.name) : [],
     currencies: country.currencies

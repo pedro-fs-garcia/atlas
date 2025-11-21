@@ -11,7 +11,6 @@ import type {
   CreateCountryDTO,
   CreateCityDTO,
   CreateObservationDTO,
-  WeatherData,
   RestCountryData,
 } from '../types';
 
@@ -159,11 +158,24 @@ class ApiClient {
     return response.data;
   }
 
-  async getWeatherByCoordinates(lat: number, lon: number): Promise<WeatherData> {
-    const response = await this.client.get<WeatherData>('/external-apis/weather/coordinates', {
-      params: { lat, lon },
-    });
-    return response.data;
+  // Fetch simplified weather data from wttr.in for a city name.
+  // Returns only the fields we care about: FeelsLikeC, humidity, temp_C
+  async getWeather(cityName: string): Promise<import('../types').WeatherSimple | null> {
+    try {
+      const url = `https://wttr.in/${encodeURIComponent(cityName)}?format=j1`;
+      const response = await this.client.get<any>(url);
+      const data = response.data;
+      const current = Array.isArray(data?.current_condition) ? data.current_condition[0] : undefined;
+      if (!current) return null;
+      return {
+        FeelsLikeC: String(current.FeelsLikeC ?? current.FeelsLikeC ?? current.feelsLikeC ?? ''),
+        humidity: String(current.humidity ?? current.Humidity ?? ''),
+        temp_C: String(current.temp_C ?? current.tempC ?? ''),
+      };
+    } catch (err) {
+      console.error('Failed to fetch weather from wttr.in', err);
+      return null;
+    }
   }
 }
 

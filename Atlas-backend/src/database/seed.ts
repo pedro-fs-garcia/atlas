@@ -105,6 +105,7 @@ async function saveCountriesData() {
         nativeName: c.nativeName ?? undefined,
         population: c.population,
         continent: continent,
+        flag_url: c.flagUrl,
         languages: savedLanguages,
         currencies: savedCurrencies,
       } as any);
